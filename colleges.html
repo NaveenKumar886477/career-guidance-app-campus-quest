@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <link rel="icon" href="./Images/scholarship.png">
+              <link rel="stylesheet" href="colleges.css">
+    <title>College Explorer</title>
+   
+</head>
+<body>
+    <h1>Explore Colleges</h1>
+    <ul class="college-list">
+        </ul>
+
+    <script>
+        // Use the same college data to generate the links
+        const C = {
+            "IIT Bombay": {}, 
+            "IIT Delhi": {},
+            "IIT Madras": {},
+            "Jawaharlal Nehru University (JNU)": {},
+            "University of Delhi": {},
+            "Anna University": {},
+            "VIT Vellore": {},
+            "SRM Institute": {},
+            "Harvard University": {},
+            "University of Oxford": {},
+            "California Institute of Technology (Caltech)": {},
+            "Princeton University": {},
+            "University of Cambridge": {},
+            "University of Tokyo": {},
+            "University of Melbourne": {},
+            "MIT": {}
+        };
+
+        const collegeList = document.querySelector('.college-list');
+
+        for (const collegeName in C) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            
+            // Encode the college name to handle spaces and special characters
+            const encodedName = encodeURIComponent(collegeName);
+            
+            a.href = `college-selection.html?college=${encodedName}`;
+            a.textContent = collegeName;
+
+            li.appendChild(a);
+            collegeList.appendChild(li);
+        }
+    </script>
+</body>
+</html>

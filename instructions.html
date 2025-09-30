@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusQuest - Aptitude Test Instructions</title>
+  <link rel="icon" href="./Images/scholarship.png">
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh; margin: 0;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .container {
+      background: #fff; padding: 2rem 3rem; border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); max-width: 700px;
+      text-align: center;
+    }
+    h1 { color: #444; }
+     h3 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      color: #444;
+    }
+     ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.6;
+    }
+
+    ul li {
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    ul { text-align: left; line-height: 1.6; padding-left: 20px; }
+    select, button {
+      margin-top: 15px; padding: 10px 18px;
+      border-radius: 8px; border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    button { background: #2575fc; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #1b5edb; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">📝 Aptitude Test Instructions</h1>
+ <h3>Test Format:</h3>
+    <ul>
+      <li>15 Questions – Verbal Ability</li>
+      <li>15 Questions – Quantitative Aptitude</li>
+      <li>15 Questions – General Knowledge</li>
+      <li>Total: <b>45 Questions (90 Marks)</b></li>
+    </ul>
+
+    <label for="language"><b>Select Language:</b></label>
+    <select id="language">
+      <option value="English">English</option>
+      <option value="Hindi">हिंदी</option>
+      <option value="Tamil">தமிழ்</option>
+      <option value="Telugu">తెలుగు</option>
+    </select>
+    
+
+    <ul id="rulesList"></ul>
+    <button id="startBtn">Start Test ➡️</button>
+  </div>
+   
+  <script>
+    const translations = {
+      English: {
+        title: "📝 Aptitude Test Instructions",
+        rules: [
+             "❌ You must not engage in unfair practices during the exam.",
+          "⏳ The test duration is 45 minutes in total.",
+          "⏱ Each question has 1 minute. It will auto move to next if time ends.",
+          "✅ +2 marks for each correct answer.",
+          "❌ -0.50 marks for each wrong answer.",
+          "🚪 Once you complete the test, you should leave the test window.",
+          "📊 Results will be based only on attempted questions."
+
+        ]
+      },
+ Hindi: {
+        title: "📝 योग्यता परीक्षा निर्देश",
+        rules: [
+          "❌ परीक्षा के दौरान अनुचित साधनों का प्रयोग न करें।",
+          "⏳ परीक्षा की कुल अवधि 45 मिनट है।",
+          "⏱ प्रत्येक प्रश्न के लिए 1 मिनट है। समय समाप्त होने पर अगला प्रश्न आ जाएगा।",
+          "✅ सही उत्तर पर +2 अंक।",
+          "❌ गलत उत्तर पर -0.50 अंक।",
+          "🚪 परीक्षा पूर्ण होने के बाद विंडो छोड़ दें।",
+          "📊 परिणाम केवल प्रयास किए गए प्रश्नों पर आधारित होंगे।"
+        ]
+      },
+        Tamil: {
+        title: "📝 திறனாய்வு தேர்வு வழிமுறைகள்",
+        rules: [
+          "❌ தேர்வின்போது முறைகேடுகளை செய்யக்கூடாது.",
+          "⏳ தேர்வின் மொத்த நேரம் 45 நிமிடங்கள்.",
+          "⏱ ஒவ்வொரு கேள்விக்கும் 1 நிமிடம். நேரம் முடிந்தவுடன் தானாக அடுத்த கேள்விக்கு செல்கிறது.",
+          "✅ சரியான பதிலுக்கு +2 மதிப்பெண்கள்.",
+          "❌ தவறான பதிலுக்கு -0.50 மதிப்பெண்கள்.",
+          "🚪 தேர்வு முடிந்தவுடன் சாளரத்தை மூட வேண்டும்.",
+          "📊 முடிவு முயற்சித்த கேள்விகளின் அடிப்படையில் மட்டுமே இருக்கும்."
+        ]
+      },
+      Telugu: {
+        title: "📝 ప్రతిభా పరీక్ష సూచనలు",
+        rules: [
+          "❌ పరీక్ష సమయంలో అన్యాయం చేయకండి.",
+          "⏳ పరీక్ష మొత్తం వ్యవధి 45 నిమిషాలు.",
+          "⏱ ప్రతి ప్రశ్నకు 1 నిమిషం ఉంటుంది. సమయం పూర్తయిన వెంటనే తదుపరి ప్రశ్న వస్తుంది.",
+          "✅ సరైన జవాబుకు +2 మార్కులు.",
+          "❌ తప్పు జవాబుకు -0.50 మార్కులు.",
+          "🚪 పరీక్ష పూర్తయిన తర్వాత విండో వదిలి వెళ్లాలి.",
+          "📊 ఫలితాలు మీరు ప్రయత్నించిన ప్రశ్నలపైనే ఆధారపడతాయి."
+        ]
+      }
+    };
+    const titleEl = document.getElementById("title");
+    const rulesList = document.getElementById("rulesList");
+    const langSelect = document.getElementById("language");
+
+    function loadLanguage(lang) {
+      const content = translations[lang];
+      titleEl.textContent = content.title;
+      rulesList.innerHTML = "";
+      content.rules.forEach(r => {
+        const li = document.createElement("li");
+        li.textContent = r;
+        rulesList.appendChild(li);
+      });
+    }
+    loadLanguage("English");
+
+    langSelect.addEventListener("change", () => {
+      localStorage.setItem("testLanguage", langSelect.value);
+      loadLanguage(langSelect.value);
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      window.location.href = "aptitude-test.html";
+    });
+  </script>
+</body>
+</html>

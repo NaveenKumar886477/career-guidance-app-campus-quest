@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusQuest - Career Selection</title>
+  <link rel="icon" href="./Images/scholarship.png">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .career-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #444;
+    }
+
+    .career-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .career-options label {
+      background: #f4f4f4;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 15px;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .career-options input {
+      display: none;
+    }
+
+    .career-options label:hover {
+      background: #e2e8ff;
+      transform: scale(1.03);
+    }
+
+    .career-options input:checked + span {
+      font-weight: bold;
+      color: #2575fc;
+    }
+
+    .career-options input:checked + span::before {
+      content: "✔ ";
+      color: #2575fc;
+    }
+
+    button {
+      background: #ff9800;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    button:hover:enabled {
+       background: #e68900;
+       transform: translateY(-2px);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="career-container">
+    <h2 id="careerHeading">Select Your Career Path</h2>
+
+    <form id="careerForm">
+      <div class="career-options">
+        <label><input type="radio" name="career" value="Engineering"><span>Engineering</span></label>
+        <label><input type="radio" name="career" value="Medicine"><span>Medicine</span></label>
+        <label><input type="radio" name="career" value="Management"><span>Management</span></label>
+        <label><input type="radio" name="career" value="Law"><span>Law</span></label>
+        <label><input type="radio" name="career" value="Arts & Humanities"><span>Arts & Humanities</span></label>
+        <label><input type="radio" name="career" value="Science"><span>Science</span></label>
+        <label><input type="radio" name="career" value="Commerce"><span>Commerce</span></label>
+        <label><input type="radio" name="career" value="Architecture"><span>Architecture</span></label>
+        <label><input type="radio" name="career" value="Education/Teaching"><span>Education / Teaching</span></label>
+        <label><input type="radio" name="career" value="Design/Fashion"><span>Design / Fashion</span></label>
+        <label><input type="radio" name="career" value="Agriculture"><span>Agriculture</span></label>
+        <label><input type="radio" name="career" value="Pharmacy"><span>Pharmacy</span></label>
+        <label><input type="radio" name="career" value="Computer Applications/IT"><span>Computer Applications / IT</span></label>
+        <label><input type="radio" name="career" value="Hospitality & Tourism"><span>Hospitality & Tourism</span></label>
+        <label><input type="radio" name="career" value="Media & Communication"><span>Media & Communication</span></label>
+        <label><input type="radio" name="career" value="Others"><span>Others</span></label>
+      </div>
+
+      <button type="submit" id="nextBtn" disabled>Next</button>
+    </form>
+  </div>
+
+  <script>
+    const careerForm = document.getElementById("careerForm");
+    const nextBtn = document.getElementById("nextBtn");
+    const radios = document.querySelectorAll('input[name="career"]');
+    const heading = document.getElementById("careerHeading");
+
+    // Fetch logged-in user
+    let user = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    // Update heading dynamically
+    if(user && user.name){
+      heading.textContent = `Recommended Careers for ${user.name} 🎓`;
+    }
+
+    // Enable button only when option selected
+    radios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        nextBtn.disabled = false;
+      });
+    });
+
+    careerForm.addEventListener("submit", function(e){
+      e.preventDefault();
+      const career = document.querySelector('input[name="career"]:checked').value;
+
+      // Save career both inside user object and separately
+      if(user){
+        user.chosenCareer = career;
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+      }
+      localStorage.setItem("chosenCareer", career);
+
+      // Redirect to student-details.html
+      window.location.href = "student-details.html";
+    });
+  </script>
+</body>
+</html>

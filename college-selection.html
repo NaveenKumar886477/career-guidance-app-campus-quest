@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career & College Guide</title>
+    <link rel="icon" href="./Images/scholarship.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 32px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .bg-gradient {
+            background-image: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+        .button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* New styles for the pop-up modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            padding: 24px;
+            margin-top: -100px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 0 35px rgba(59, 130, 246, 0.8);
+            text-align: center;
+            color: white;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-100%);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div id="app-container" class="container">
+        <!-- Login Form to get user's name and location -->
+        <div id="login-form" class="fade-in">
+            <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Welcome to Your College and Career Guide 🎓</h1>
+            <p class="text-center text-gray-600 mb-8">Please enter your details to get started.</p>
+            <div class="space-y-4">
+                <div>
+                    <label for="userName" class="block text-sm font-medium text-gray-700">Your Name</label>
+                    <input type="text" id="userName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Alex">
+                </div>
+                <div>
+                    <label for="userLocation" class="block text-sm font-medium text-gray-700">Your Location</label>
+                    <select id="userLocation" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="India">India</option>
+                        <option value="Abroad">Abroad</option>
+                    </select>
+                </div>
+                <button onclick="handleLogin()" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Start Guide
+                </button>
+            </div>
+        </div>
+        
+        <!-- Thank You Page (New Section) -->
+        <div id="thank-you-page" class="hidden text-center fade-in">
+            <h2 class="text-3xl font-bold mb-4">Thank You! 😊</h2>
+            <p id="thank-you-message-main" class="text-lg text-gray-700 mb-6"></p>
+            <button onclick="showScoreForm()" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Continue to Test Score
+            </button>
+        </div>
+
+        <!-- Main Form to get user's score -->
+        <div id="intro-form" class="hidden">
+            <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Your College and Career Guide 🎓</h1>
+            <p class="text-center text-gray-600 mb-8">Now, enter your score to find your path to success.</p>
+            <div class="space-y-4">
+                <div>
+                    <label for="userScore" class="block text-sm font-medium text-gray-700">Your Test Score (out of 90)</label>
+                    <input type="number" id="userScore" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 85">
+                </div>
+                <button onclick="submitScore()" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Find My Path
+                </button>
+            </div>
+        </div>
+
+        <!-- Main content area for results and conversation -->
+        <div id="results-area" class="hidden fade-in">
+            <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Career Recommendations and College that fits to you</h1>
+            <h2 class="text-2xl font-semibold text-center mb-4 text-gray-800">Analyzing Your Potential...</h2>
+            <div id="message-box" class="text-center text-gray-700 leading-relaxed"></div>
+        </div>
+    </div>
+
+    <!-- Congratulations Pop-up Modal -->
+    <div id="congrats-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-4xl font-bold mb-4">🌟 Congratulations! 🏆</h2>
+            <p id="thank-you-message" class="text-lg leading-relaxed"></p>
+        </div>
+    </div>
+
+    <script>
+        // Sample student data for demonstration
+        const mockStudentData = [
+            { name: "Student A", score: 85 },
+            { name: "Student B", score: 70 },
+            { name: "Student C", score: 55 },
+            { name: "Student D", score: 79 },
+            { name: "Student E", score: 40 }
+        ];
+
+        // College and Career data based on score tiers and location (updated for out of 90)
+        const collegeTiers = [
+            // Indian Colleges
+            {
+                minScore: 81, // 90% of 90
+                location: "India",
+                colleges: [
+                    { name: "IIT Bombay", website: "https://www.iitb.ac.in/", img: "./Images/iit-bombay1.jpg" },
+                    { name: "NIT Trichy", website: "https://www.nitt.edu/", img: "./Images/nit-trichy1.jpg" }
+                ],
+                careers: ["B.Tech in Computer Science", "B.Tech in Artificial Intelligence", "M.B.B.S.", "L.L.B.", "Ph.D. in Quantum Computing", "B.Tech in Aerospace Engineering"]
+            },
+            {
+                minScore: 63, // 70% of 90
+                location: "India",
+                colleges: [
+                    { name: "Jawaharlal Nehru University", website: "https://www.jnu.ac.in/", img: "./Images/jnu1.jpg" },
+                    { name: "NIT Surathkal", website: "https://www.nitk.ac.in/", img: "./Images/nit-surathkal1.jpg" }
+                ],
+                careers: ["B.E. in Civil Engineering", "M.C.A.", "B.Sc. in Data Science", "B.Sc. in Statistics", "B.E. in Mechanical Engineering"]
+            },
+            {
+                minScore: 45, // 50% of 90
+                location: "India",
+                colleges: [
+                    { name: "Anna University", website: "https://www.annauniv.edu/", img: "./Images/anna-university1.jpg" },
+                    { name: "VIT University Vellore", website: "https://www.vit.ac.in/", img: "./Images/vit-vellore1.jpg" }
+                ],
+                careers: ["B.C.A. in Cyber Security", "B.Com. with Chartered Accountancy", "B.B.A. in Financial Management", "B.Tech in Electronics and Communication"]
+            },
+            {
+                minScore: 0,
+                location: "India",
+                colleges: [
+                    { name: "SRM Institute of Science and Technology", website: "https://www.srmist.edu.in/", img: "./Images/srm-institute1.jpg" }
+                ],
+                careers: ["B.A. in General Studies", "B.Sc. in Physics", "B.C.A. with Computer Applications", "B.Com. (General)"]
+            },
+            // Abroad Colleges
+            {
+                minScore: 81, // 90% of 90
+                location: "Abroad",
+                colleges: [
+                    { name: "Harvard University", website: "https://www.harvard.edu/", img: "./Images/harvard-university1.jpg" },
+                    { name: "MIT University", website: "https://www.mit.edu/", img: "./Images/mit1.jpg" }
+                ],
+                careers: ["Master of Science (M.S) in Computer Science", "Ph.D. in Physics", "J.D. (Juris Doctor)", "M.B.A. (Master of Business Administration)", "M.D. (Doctor of Medicine)"]
+            },
+            {
+                minScore: 63, // 70% of 90
+                location: "Abroad",
+                colleges: [
+                    { name: "University of Toronto", website: "https://www.utoronto.ca/", img: "./Images/university-of-toronto1.jpg" },
+                    { name: "Stanford University", website: "https://www.stanford.edu/", img: "./Images/stanford-university1.jpg" }
+                ],
+                careers: ["B.S. in Mechanical Engineering", "Master of Engineering (M.Eng)", "B.S. in Computer Engineering", "M.S. in Artificial Intelligence"]
+            },
+            {
+                minScore: 45, // 50% of 90
+                location: "Abroad",
+                colleges: [
+                    { name: "University of Cambridge", website: "https://www.cam.ac.uk/", img: "https://placehold.co/400x200/525252/FFF?text=Cambridge+University" },
+                    { name: "University of Oxford", website: "https://www.ox.ac.uk/", img: "https://placehold.co/400x200/525252/FFF?text=Oxford+University" }
+                ],
+                careers: ["B.A. in Financial Management", "B.Sc. in Mathematics", "B.S. in Statistics", "B.A. in Political Science"]
+            },
+            {
+                minScore: 0,
+                location: "Abroad",
+                colleges: [
+                    { name: "Monash University", website: "https://www.monash.edu/", img: "https://placehold.co/400x200/525252/FFF?text=Monash+University" }
+                ],
+                careers: ["Associate Degree in Computer Science", "Diploma in Business Studies", "Bachelor of Arts", "Bachelor of Science"]
+            }
+        ];
+
+        // Function to handle the initial login form submission
+        function handleLogin() {
+            const userName = document.getElementById('userName').value;
+            const userLocation = document.getElementById('userLocation').value;
+
+            if (userName.trim() === '') {
+                showModal('Please enter your name.');
+                return;
+            }
+
+            // Save the dynamic name and location to local storage
+            localStorage.setItem('userName', userName);
+            localStorage.setItem('userLocation', userLocation);
+
+            // Hide the login form and show the thank you page
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('thank-you-page').classList.remove('hidden');
+
+            // Set the dynamic thank you message
+            const thankYouMessage = `Thank you so much <span class="font-semibold">${userName}</span> for choosing us. You provide us an opportunity to choose a best career for you and make your life as so special. We are always here to help you. 😊🙏💯`;
+            document.getElementById('thank-you-message-main').innerHTML = thankYouMessage;
+        }
+
+        // Function to transition from the thank you page to the score form
+        function showScoreForm() {
+            document.getElementById('thank-you-page').classList.add('hidden');
+            document.getElementById('intro-form').classList.remove('hidden');
+        }
+
+        // Function to get a dynamic message based on the user's score
+        function getDynamicMessage(score) {
+            if (score >= 81) {
+                return `Your score of <span class="font-bold">${score}</span> is exceptional! Your future is filled with opportunities at top institutions.`;
+            } else if (score >= 63) {
+                return `A score of <span class="font-bold">${score}</span> shows great potential. You are on the right path to a successful career.`;
+            } else if (score >= 45) {
+                return `With a score of <span class="font-bold">${score}</span>, you have many options. Let's find a college where you can thrive and excel.`;
+            } else if (score >= 27) {
+                return `A score of <span class="font-bold">${score}</span> is a starting point, not a finish line. Your potential is limitless and we will help you find a great path.`;
+            } else {
+                return `Your score of <span class="font-bold">${score}</span> is just a number. Your true potential lies in your dedication. Let's find a college that will help you grow.`;
+            }
+        }
+
+        // Function to get a dynamic career guidance message (updated for out of 90)
+        function getDynamicCareerMessage(score, recommendedCareer, recommendedCollege) {
+            if (score >= 81) {
+                return `<p class="mb-4">You have a world of choices! The field of <span class="font-semibold">${recommendedCareer}</span> is perfect for your sharp mind and ambition. A top-tier institution like <span class="font-semibold">${recommendedCollege.name}</span> will challenge you to innovate and lead. This is more than a choice; it's a launchpad for your future.
+                    <p class="mb-4">The whispers of fate hint at a single, correct path. The choice is yours, but is it? Sometimes destiny selects for us. There's a certain elegance in letting go of control and embracing the inevitable.</p>
+                    <p class="font-bold text-lg text-blue-700 mt-6">After careful consideration, we believe your future lies here...</p>`;
+            } else if (score >= 63) {
+                return `<p class="mb-4">With a score like yours, opportunities are abundant. A dynamic field like <span class="font-semibold">${recommendedCareer}</span> is a perfect match for your skills. We recommend <span class="font-semibold">${recommendedCollege.name}</span>, a place where you can refine your talents and build a strong foundation for your career.
+                    <p class="mb-4">The whispers of fate hint at a single, correct path. The choice is yours, but is it? Sometimes destiny selects for us. There's a certain elegance in letting go of control and embracing the inevitable.</p>
+                    <p class="font-bold text-lg text-blue-700 mt-6">After careful consideration, we believe your future lies here...</p>`;
+            } else if (score >= 45) {
+                return `<p class="mb-4">You have solid potential! The path of a <span class="font-semibold">${recommendedCareer}</span> offers creative and fulfilling work. A welcoming community like <span class="font-semibold">${recommendedCollege.name}</span> can provide the perfect environment for you to explore your interests and develop new skills.
+                    <p class="mb-4">The whispers of fate hint at a single, correct path. The choice is yours, but is it? Sometimes destiny selects for us. There's a certain elegance in letting go of control and embracing the inevitable.</p>
+                    <p class="font-bold text-lg text-blue-700 mt-6">After careful consideration, we believe your future lies here...</p>`;
+            } else {
+                return `<p class="mb-4">Your journey is just beginning. A career in <span class="font-semibold">${recommendedCareer}</span> can be incredibly rewarding. The supportive atmosphere at <span class="font-semibold">${recommendedCollege.name}</span> will help you gain confidence and practical experience. This is your chance to build a brighter future.
+                    <p class="mb-4">The whispers of fate hint at a single, correct path. The choice is yours, but is it? Sometimes destiny selects for us. There's a certain elegance in letting go of control and embracing the inevitable.</p>
+                    <p class="font-bold text-lg text-blue-700 mt-6">After careful consideration, we believe your future lies here...</p>`;
+            }
+        }
+
+        function submitScore() {
+            // Get user name and location from local storage
+            let userName = localStorage.getItem('userName') || "User";
+            let userLocation = localStorage.getItem('userLocation') || "India";
+
+            const userScore = parseInt(document.getElementById('userScore').value, 10);
+
+            // Basic validation for the new 90-point scale
+            if (isNaN(userScore) || userScore < 0 || userScore > 90) {
+                showModal('Please enter a valid score between 0 and 90.');
+                return;
+            }
+
+            // Hide form and show results area
+            document.getElementById('intro-form').classList.add('hidden');
+            document.getElementById('results-area').classList.remove('hidden');
+
+            // Find max, min, avg marks
+            const allScores = [...mockStudentData.map(s => s.score), userScore];
+            const maxScore = Math.max(...allScores);
+            const minScore = Math.min(...allScores);
+            const avgScore = allScores.reduce((sum, s) => sum + s, 0) / allScores.length;
+
+            const messageBox = document.getElementById('message-box');
+            
+            // Use the new dynamic message function for the intro
+            messageBox.innerHTML = `
+                <p class="mb-2">Thank you, <span class="font-semibold">${userName}</span>. Let's analyze your score of <span class="font-semibold">${userScore}</span>.</p>
+                <p class="mb-4">With scores ranging from <span class="font-bold">${minScore}</span> to <span class="font-bold">${maxScore}</span>, and an average of <span class="font-bold">${avgScore.toFixed(2)}</span>, your performance is a point of intrigue.</p>
+                <p>${getDynamicMessage(userScore)}</p>
+                <p>The numbers speak, but the true path remains a mystery... for now. Wait while we navigate the endless possibilities...</p>
+            `;
+
+            // Start the "confusing" and guiding process
+            setTimeout(() => {
+                // Filter colleges based on the user's selected location
+                const filteredTiers = collegeTiers.filter(t => t.location === userLocation);
+                
+                const tier = filteredTiers.find(t => userScore >= t.minScore);
+                const recommendedCollege = tier.colleges[Math.floor(Math.random() * tier.colleges.length)];
+                const recommendedCareer = tier.careers[Math.floor(Math.random() * tier.careers.length)];
+
+                // Get dynamic career message
+                const dynamicCareerMsg = getDynamicCareerMessage(userScore, recommendedCareer, recommendedCollege);
+
+                // Update the message box with the new dynamic content
+                messageBox.innerHTML += `
+                    <div class="mt-6 text-left">
+                        ${dynamicCareerMsg}
+                        <div class="mt-4 p-4 border rounded-md border-blue-300">
+                            <img src="${recommendedCollege.img}" alt="${recommendedCollege.name}" class="w-full rounded-md shadow-md mb-4">
+                            <p class="font-bold">University: ${recommendedCollege.name}</p>
+                            <p class="font-bold">Career: ${recommendedCareer}</p>
+                            <a href="${recommendedCollege.website}" id="visitCollegeLink" class="mt-4 block w-full text-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient button focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" target="_blank">
+                                Visit College Website
+                            </a>
+                        </div>
+                    </div>
+                `;
+
+                // Intercept the link click to show the final message and open the link
+                document.getElementById('visitCollegeLink').addEventListener('click', function(event) {
+                    event.preventDefault(); // Stop the link from navigating away immediately
+
+                    // Get the college name dynamically
+                    const recommendedCollegeName = recommendedCollege.name;
+                    
+                    // Create the message for the modal
+                    const modalMessage = `
+                        Your score made you choose this college. Wishing you always achieve success in your entire life and mark this a beginning of a new chapter in your life. Make ${recommendedCollegeName} proud of you.
+                    `;
+
+                    // Show the custom modal message
+                    showModal(modalMessage);
+
+                    // Then, after a short delay, open the college website in a new tab
+                    const collegeWebsite = this.href;
+                    setTimeout(() => {
+                        window.open(collegeWebsite, '_blank');
+                    }, 3000);
+                });
+            }, 3000);
+        }
+
+        // Function to show the modal pop-up
+        function showModal(messageText) {
+            const userName = localStorage.getItem('userName') || "User";
+            const modal = document.getElementById('congrats-modal');
+            const message = document.getElementById('thank-you-message');
+            
+            message.innerHTML = `
+                ${messageText}
+            `;
+            
+            modal.classList.add('show');
+            
+            // Hide the modal after a few seconds
+            setTimeout(() => {
+                modal.classList.remove('show');
+            }, 4000);
+        }
+
+        // Initially show the login form
+        window.onload = function() {
+            document.getElementById('login-form').classList.remove('hidden');
+        };
+    </script>
+
+</body>
+</html>

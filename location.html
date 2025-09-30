@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusQuest - Location Selection</title>
+  <link rel="icon" href="./Images/scholarship.png">
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+
+    .container {
+      background: #fff;
+      padding: 2rem 3rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 350px;
+      animation: fadeIn 0.7s ease-in-out;
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #444;
+    }
+
+    .option-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option-card:hover {
+      border-color: #2575fc;
+      background: #f5f9ff;
+    }
+
+    .option-card input {
+      accent-color: #2575fc;
+      transform: scale(1.2);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      border: none;
+      background: #2575fc;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #1b5edb;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Select Study Location</h2>
+
+    <form id="locationForm">
+      <label class="option-card">
+        <input type="radio" name="location" value="India" required>
+        🇮🇳 India
+      </label>
+
+      <label class="option-card">
+        <input type="radio" name="location" value="Abroad">
+        ✈️ Abroad
+      </label>
+
+      <button type="submit">Next ➡️</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("locationForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const location = document.querySelector('input[name="location"]:checked').value;
+      localStorage.setItem("studyLocation", location); // Save selected location
+      window.location.href = "instructions.html"; // Redirect to instructions.html
+    });
+  </script>
+</body>
+</html>

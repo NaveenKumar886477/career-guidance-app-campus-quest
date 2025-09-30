@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusQuest - Login</title>
+  <link rel="icon" href="./Images/scholarship.png">
+      <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="login.css">
+  <style>
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 4px;
+      display: block;
+    }
+    .password-container {
+      display: flex;
+      align-items: center;
+    }
+    .password-container input {
+      flex: 1;
+    }
+    .toggle-password {
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    input {
+      border: 1px solid #ccc;
+      padding: 6px;
+      border-radius: 5px;
+      outline: none;
+      transition: 0.3s;
+    }
+    input.error-border {
+      border: 2px solid red;
+    }
+    input.valid-border {
+      border: 2px solid green;
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login | CampusQuest 🎓 </h2>
+    <form id="loginForm">
+      <label>Email:</label>
+      <input type="email" id="email" required>
+      <span class="error" id="emailError"></span>
+
+      <label>Password:</label>
+      <div class="password-container">
+        <input type="password" id="loginPassword" required>
+        <span class="toggle-password" id="toggleLogin">👁️</span>
+      </div>
+      <span class="error" id="passwordError"></span>
+
+      <button type="submit" id="loginBtn" disabled>Login</button>
+    </form>
+    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+  </div>
+
+    
+
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("loginPassword");
+    const togglePassword = document.getElementById("toggleLogin");
+    const loginBtn = document.getElementById("loginBtn");
+
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+
+    // Toggle password visibility
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      togglePassword.textContent = type === "password" ? "👁️" : "🙈";
+    });
+
+    // Validation function
+    function validateInput(input, errorElement, condition, errorMessage) {
+      if (!condition) {
+        errorElement.textContent = errorMessage;
+        input.classList.add("error-border");
+        input.classList.remove("valid-border");
+        return false;
+      } else {
+        errorElement.textContent = "";
+        input.classList.add("valid-border");
+        input.classList.remove("error-border");
+        return true;
+      }
+    }
+
+    function checkFormValidity() {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const isEmailValid = validateInput(
+        emailInput,
+        emailError,
+        emailPattern.test(emailInput.value.trim()),
+        "Please enter a valid email address."
+      );
+
+      const isPasswordValid = validateInput(
+        passwordInput,
+        passwordError,
+        passwordInput.value.trim().length > 0,
+        "Password is required."
+      );
+
+      loginBtn.disabled = !(isEmailValid && isPasswordValid);
+    }
+
+    emailInput.addEventListener("input", checkFormValidity);
+    passwordInput.addEventListener("input", checkFormValidity);
+
+    // On form submit
+    loginForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      checkFormValidity();
+
+      if (!loginBtn.disabled) {
+        // Get saved user data from signup
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+
+        if (savedUser &&
+            savedUser.email === emailInput.value.trim() &&
+            savedUser.password === passwordInput.value.trim()) {
+          
+          // Save current logged in user
+          localStorage.setItem("loggedInUser", JSON.stringify(savedUser));
+
+          alert("Login successful! Welcome " + savedUser.name);
+          window.location.href = "student-details.html"; // redirect
+        } else {
+          passwordError.textContent = "Invalid email or password.";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

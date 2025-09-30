@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusQuest - Test Results</title>
+    <link rel="icon" href="./Images/scholarship.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        h1 {
+            text-align: center;
+            color: #5d6d7e;
+            margin-bottom: 1rem;
+        }
+        .score-summary, .remarks, .time-table, .category-summary {
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+        .score-summary span, .remarks span, .category-summary span {
+            font-weight: bold;
+            color: #2e86de;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #e4e9f0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: center;
+        }
+        th {
+            background: #5d6d7e;
+            color: #fff;
+        }
+        .pie-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .redirect-msg {
+            text-align: center;
+            margin-top: 1rem;
+            color: #e67e22;
+            font-weight: bold;
+        }
+        .score-reminder {
+            display: none; /* Initially hidden */
+            text-align: center;
+            font-size: 1.1rem;
+            color: #2e86de;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>CampusQuest - Test Results</h1>
+    
+    <div class="score-summary">
+        <p>Total Score: <span id="totalScore">0</span></p>
+        <p>Questions Attempted: <span id="attempted">0</span></p>
+        <p>Questions Unattempted: <span id="unattempted">0</span></p>
+        <p>Remarks: <span id="remarks">-</span></p>
+    </div>
+
+    <div class="category-summary">
+        <h3>Category-wise Scores & Areas of Improvement</h3>
+        <p>VERBAL: <span id="verbalScore">0</span> / <span id="verbalTotal">0</span></p>
+        <p>QUANT: <span id="quantScore">0</span> / <span id="quantTotal">0</span></p>
+        <p>GK: <span id="gkScore">0</span> / <span id="gkTotal">0</span></p>
+        <p>Areas of Improvement: <span id="improvement">-</span></p>
+    </div>
+
+    <div class="pie-container">
+        <canvas id="sectionChart"></canvas>
+    </div>
+
+    <div class="time-table">
+        <h3>Time Taken per Question (seconds)</h3>
+        <table id="timeTable">
+            <tr>
+                <th>Question No.</th>
+                <th>Time Taken</th>
+                <th>Status</th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="score-reminder" id="scoreReminder">
+        Please note down your score (<span id="finalScoreReminder">0</span>) to enter it on the next page.
+    </div>
+
+    <div class="redirect-msg">
+        You will be redirected to career recommendations and colleges page in <span id="countdown">15</span> seconds...
+    </div>
+</div>
+
+<script>
+    // Get stored answers and time
+    const answersState = JSON.parse(localStorage.getItem('quizAnswers')) || [];
+    const quizTime = JSON.parse(localStorage.getItem('quizTime')) || { totalTimeTaken: 0, timesPerQuestion: [] };
+
+    const questions = [
+        {category:"VERBAL",q:"1. Synonym of 'Angry'?",options:["Mad","Happy","Calm","Excited"],answer:"Mad"},
+        {category:"VERBAL",q:"2. Antonym of 'Difficult'?",options:["Hard","Easy","Tough","Challenging"],answer:"Easy"},
+        {category:"VERBAL",q:"3. Synonym of 'Small'?",options:["Tiny","Big","Large","Huge"],answer:"Tiny"},
+        {category:"VERBAL",q:"4. Antonym of 'Hot'?",options:["Warm","Cold","Boiling","Scorching"],answer:"Cold"},
+        {category:"VERBAL",q:"5. Fill in: He is very ____.",options:["Brave","Lazy","Rude","Sad"],answer:"Brave"},
+        {category:"VERBAL",q:"6. Synonym of 'Smart'?",options:["Clever","Dull","Lazy","Foolish"],answer:"Clever"},
+        {category:"VERBAL",q:"7. Antonym of 'Generous'?",options:["Selfish","Kind","Helpful","Friendly"],answer:"Selfish"},
+        {category:"VERBAL",q:"8. Choose the synonym of 'Calm'?",options:["Peaceful","Angry","Loud","Busy"],answer:"Peaceful"},
+        {category:"VERBAL",q:"9. Antonym of 'Early'?",options:["Late","Soon","On time","Ahead"],answer:"Late"},
+        {category:"VERBAL",q:"10. Synonym of 'Brilliant'?",options:["Smart","Dull","Weak","Slow"],answer:"Smart"},
+        {category:"VERBAL",q:"11. Antonym of 'Fast'?",options:["Slow","Quick","Rapid","Speedy"],answer:"Slow"},
+        {category:"VERBAL",q:"12. Synonym of 'Funny'?",options:["Humorous","Serious","Sad","Angry"],answer:"Humorous"},
+        {category:"VERBAL",q:"13. Antonym of 'Light'?",options:["Heavy","Bright","Soft","Thin"],answer:"Heavy"},
+        {category:"VERBAL",q:"14. Choose correct word: She is very ____.",options:["Polite","Rude","Lazy","Angry"],answer:"Polite"},
+        {category:"VERBAL",q:"15. Synonym of 'Quiet'?",options:["Silent","Loud","Noisy","Chatty"],answer:"Silent"},
+        {category:"QUANT",q:"16. 25 + 30?",options:["50","55","60","65"],answer:"55"},
+        {category:"QUANT",q:"17. 50 ÷ 2?",options:["20","25","30","15"],answer:"25"},
+        {category:"QUANT",q:"18. 7 × 8?",options:["54","56","58","60"],answer:"56"},
+        {category:"QUANT",q:"19. 100 – 45?",options:["55","50","60","65"],answer:"55"},
+        {category:"QUANT",q:"20. 18 ÷ 3?",options:["6","5","7","8"],answer:"6"},
+        {category:"QUANT",q:"21. 15 × 4?",options:["60","55","50","65"],answer:"60"},
+        {category:"QUANT",q:"22. 200 + 300?",options:["400","500","450","600"],answer:"500"},
+        {category:"QUANT",q:"23. 1000 ÷ 10?",options:["100","90","120","110"],answer:"100"},
+        {category:"QUANT",q:"24. 81 ÷ 9?",options:["8","9","10","7"],answer:"9"},
+        {category:"QUANT",q:"25. 14 + 28?",options:["42","40","38","45"],answer:"42"},
+        {category:"QUANT",q:"26. 12 × 12?",options:["144","124","132","142"],answer:"144"},
+        {category:"QUANT",q:"27. 100 – 35?",options:["65","60","70","55"],answer:"65"},
+        {category:"QUANT",q:"28. 45 + 55?",options:["100","90","110","95"],answer:"100"},
+        {category:"QUANT",q:"29. 5²?",options:["25","20","30","15"],answer:"25"},
+        {category:"QUANT",q:"30. 81 ÷ 9?",options:["8","9","10","7"],answer:"9"},
+        {category:"GK",q:"31. Capital of India?",options:["Delhi","Mumbai","Chennai","Kolkata"],answer:"Delhi"},
+        {category:"GK",q:"32. Who is CM of Tamil Nadu?",options:["MK Stalin","Edappadi Palanisamy","O Panneerselvam","J Jayalalithaa"],answer:"MK Stalin"},
+        {category:"GK",q:"33. Largest planet?",options:["Mars","Jupiter","Saturn","Earth"],answer:"Jupiter"},
+        {category:"GK",q:"34. Smallest continent?",options:["Asia","Australia","Europe","Africa"],answer:"Australia"},
+        {category:"GK",q:"35. Currency of USA?",options:["Dollar","Euro","Rupee","Yen"],answer:"Dollar"},
+        {category:"GK",q:"36. Olympic 2021 host country?",options:["Japan","China","Brazil","UK"],answer:"Japan"},
+        {category:"GK",q:"37. Chemical symbol for Gold?",options:["Au","Ag","Gd","Go"],answer:"Au"},
+        {category:"GK",q:"38. Who discovered electricity?",options:["Edison","Volta","Tesla","Faraday"],answer:"Faraday"},
+        {category:"GK",q:"39. National bird of India?",options:["Peacock","Eagle","Sparrow","Parrot"],answer:"Peacock"},
+        {category:"GK",q:"40. Largest ocean?",options:["Pacific","Atlantic","Indian","Arctic"],answer:"Pacific"},
+        {category:"GK",q:"41. Fastest land animal?",options:["Cheetah", "Lion", "Tiger", "Leopard"], answer: "Cheetah"},
+        {category:"GK",q:"42. Who wrote 'Mahabharata'?",options:["Vyasa", "Kalidasa", "Valmiki", "Tulsidas"], answer: "Vyasa"},
+        {category:"GK",q:"43. 2022 FIFA World Cup winner?",options:["Argentina", "Brazil", "France", "Germany"], answer: "Argentina"},
+        {category:"GK",q:"44. Current President of USA?",options:["Biden", "Trump", "Obama", "Bush"], answer: "Biden"},
+        {category:"GK",q:"45. Tallest mountain?",options:["Everest", "K2", "Kangchenjunga", "Makalu"], answer: "Everest"}
+    ];
+    
+    // Scoring & attempts
+    let totalScore = 0, attempted = 0, unattempted = 0;
+    const sectionScores = {VERBAL:0, QUANT:0, GK:0};
+    const sectionTotals = {VERBAL:0, QUANT:0, GK:0};
+
+    questions.forEach(q => sectionTotals[q.category]++);
+
+    answersState.forEach((ans, idx) => {
+        const q = questions[idx];
+        if (ans && ans.selected) {
+            attempted++;
+            if (ans.selected === q.answer) {
+                totalScore += 2;
+                sectionScores[q.category] += 2;
+            } else {
+                totalScore -= 0.5;
+                sectionScores[q.category] = Math.max(0, sectionScores[q.category] - 0.5);
+            }
+        } else {
+            unattempted++;
+        }
+    });
+
+    const totalTime = quizTime.totalTimeTaken || 0;
+    const totalTimeMinutes = (totalTime / 60).toFixed(2);
+
+    let remarksText = "";
+    if (totalScore >= 70) remarksText = "Excellent!";
+    else if (totalScore >= 50) remarksText = "Good, can improve!";
+    else remarksText = "Needs Improvement";
+
+    let improvementArr = [];
+    for (const key in sectionScores) {
+        if (sectionScores[key] < 10) improvementArr.push(key);
+    }
+    let improvementText = improvementArr.length > 0 ? improvementArr.join(", ") : "None";
+
+    document.getElementById('totalScore').textContent = totalScore;
+    document.getElementById('attempted').textContent = attempted;
+    document.getElementById('unattempted').textContent = unattempted;
+    document.getElementById('remarks').textContent = remarksText;
+    
+    document.getElementById('verbalScore').textContent = sectionScores.VERBAL;
+    document.getElementById('quantScore').textContent = sectionScores.QUANT;
+    document.getElementById('gkScore').textContent = sectionScores.GK;
+    document.getElementById('verbalTotal').textContent = sectionTotals.VERBAL;
+    document.getElementById('quantTotal').textContent = sectionTotals.QUANT;
+    document.getElementById('gkTotal').textContent = sectionTotals.GK;
+    document.getElementById('improvement').textContent = improvementText;
+    document.getElementById('finalScoreReminder').textContent = totalScore;
+
+
+    const ctx = document.getElementById('sectionChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['VERBAL', 'QUANT', 'GK'],
+            datasets: [{
+                label: 'Section Scores',
+                data: [sectionScores.VERBAL, sectionScores.QUANT, sectionScores.GK],
+                backgroundColor: ['#2e86de', '#f37712', '#2ecc71']
+            }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+    });
+
+    const timeTable = document.getElementById('timeTable');
+questions.forEach((q, idx) => {
+    const tr = document.createElement('tr');
+    const timeTaken = quizTime.timesPerQuestion[idx] || 0;
+    const status = answersState[idx]?.selected ? (answersState[idx].selected === q.answer ? "Correct" : "Incorrect") : "Unattempted";
+    tr.innerHTML = `<td>${idx + 1}</td><td>${timeTaken}</td><td>${status}</td>`;
+    timeTable.appendChild(tr);
+});
+
+    const timeSummary = document.createElement('p');
+    timeSummary.style.fontWeight = "bold";
+    timeSummary.textContent = `Exam Completed in: ${totalTimeMinutes} minutes`;
+    document.querySelector('.score-summary').appendChild(timeSummary);
+
+    // Get the career recommendation
+    function getCareerRecommendation(){
+        const scores = sectionScores;
+        if(scores.QUANT >= scores.VERBAL && scores.QUANT >= scores.GK) return "Engineering / Quantitative";
+        if(scores.VERBAL >= scores.QUANT && scores.VERBAL >= scores.GK) return "Journalism / Literature";
+        return "Civil Services / General Awareness";
+    }
+
+    // Redirect with a 15-second delay
+    let countdown = 15;
+    const countdownEl = document.getElementById('countdown');
+    const scoreReminderEl = document.getElementById('scoreReminder');
+
+    const interval = setInterval(() => {
+        countdown--;
+        countdownEl.textContent = countdown.toString().padStart(2, '0');
+
+        // Show the reminder message after 10 seconds
+        if (countdown <= 5) {
+            scoreReminderEl.style.display = 'block';
+        }
+
+        if (countdown <= 0) {
+            clearInterval(interval);
+            const recommendedCareer = getCareerRecommendation();
+            const encodedRecommendation = encodeURIComponent(recommendedCareer);
+            window.location.href = `college-selection.html?career=${encodedRecommendation}&score=${totalScore}`;
+        }
+    }, 1000);
+</script>
+</body>
+</html>

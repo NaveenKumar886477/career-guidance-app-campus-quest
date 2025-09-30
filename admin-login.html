@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusQuest Admin Login</title>
+      <link rel="icon" href="./Images/scholarship.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Background animation */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Login form card styling */
+        form {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 2rem; /* Add some space below the form */
+        }
+
+        /* Container for the label and input to align them horizontally */
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        label {
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap; /* Prevent label from wrapping */
+            min-width: 80px; /* Give the label a fixed width for alignment */
+        }
+
+        input {
+            flex-grow: 1; /* Allow the input to take up remaining space */
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        button {
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        /* Custom alert modal styling */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            color: #ef4444; /* Red color for error */
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .modal-button {
+            background-color: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-button:hover {
+            background-color: #dc2626;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <form id="adminLoginForm">
+        <h2 class="text-2xl font-semibold text-center text-blue-600 mb-4">Admin Login</h2>
+        
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password" required>
+        </div>
+        
+        <button type="submit">Login</button>
+    </form>
+
+      <footer class="bg-[#1f2937] text-[#d1d5db] py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-[#f9fafb]">CampusQuest 🎓</h3>
+                    <p class="text-sm">Empowering your future, one step at a time.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-[#f9fafb]">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors">Home</a></li>
+                        <li><a href="about.html" class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors">About Us</a></li>
+                        <li><a href="contact.html" class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors">Contact</a></li>
+                        <li><a href="privacy.html" class="text-[#9ca3af] hover:text-[#e5e7eb] transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-[#f9fafb]">Connect With Us</h3>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                         <a href="#" target="_blank" aria-label="Facebook">
+                            <svg class="h-6 w-6 fill-current text-[#d1d5db] hover:text-[#f9fafb] transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h137.25V327.69h-43.27V283.43h43.27v-35.15c0-42.66 25.75-65.84 63.74-65.84 18.06 0 32.55 1.34 36.87 2.08v37.66h-22.61c-22.38 0-26.71 10.66-26.71 26.23v31.75h47.24l-6.18 44.26h-41.06V480H400a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48z"/></svg>
+                        </a>
+                        <a href="#" target="_blank" aria-label="Twitter">
+                            <svg class="h-6 w-6 fill-current text-[#d1d5db] hover:text-[#f9fafb] transition-colors" xmlns="http://www.w3.org/2000/svg" <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M523.4 215.7C523.7 220.2 523.7 224.8 523.7 229.3C523.7 368 418.1 527.9 225.1 527.9C165.6 527.9 110.4 510.7 64 480.8C72.4 481.8 80.6 482.1 89.3 482.1C138.4 482.1 183.5 465.5 219.6 437.3C173.5 436.3 134.8 406.1 121.5 364.5C128 365.5 134.5 366.1 141.3 366.1C150.7 366.1 160.1 364.8 168.9 362.5C120.8 352.8 84.8 310.5 84.8 259.5L84.8 258.2C98.8 266 115 270.9 132.2 271.5C103.9 252.7 85.4 220.5 85.4 184.1C85.4 164.6 90.6 146.7 99.7 131.1C151.4 194.8 229 236.4 316.1 240.9C314.5 233.1 313.5 225 313.5 216.9C313.5 159.1 360.3 112 418.4 112C448.6 112 475.9 124.7 495.1 145.1C518.8 140.6 541.6 131.8 561.7 119.8C553.9 144.2 537.3 164.6 515.6 177.6C536.7 175.3 557.2 169.5 576 161.4C561.7 182.2 543.8 200.7 523.4 215.7z"/></svg>
+                        </a>
+                        <a href="#" target="_blank" aria-label="LinkedIn">
+                            <svg class="h-6 w-6 fill-current text-[#d1d5db] hover:text-[#f9fafb] transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H32A32 32 0 0 0 0 64v384a32 32 0 0 0 32 32h384a32 32 0 0 0 32-32V64a32 32 0 0 0-32-32zM132.8 384H69.44V188.42H132.8zm-.78-208.56c-20.84 0-37.76-17.15-37.76-38.16 0-20.93 17.06-38.12 37.76-38.12 20.78 0 37.76 17.19 37.76 38.12s-16.98 38.16-37.76 38.16zM384 384h-63.36V285.86c0-23.75-.43-54.29-33.15-54.29-33.19 0-38.25 25.68-38.25 52.48V384h-63.36V188.42h60.84v27.97h.81c8.47-16.14 29.4-33.15 60.08-33.15 64.3 0 76.2 42.22 76.2 97.16V384z"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-[#4b5563] mt-8 pt-6 text-sm text-center">
+                <p>&copy; 2025 CampusQuest. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- Custom Modal for Alert -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl">Access Denied!</h3>
+            <p>Only admins can log in. Please check your credentials.</p>
+            <button id="closeModal" class="modal-button">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('adminLoginForm');
+        const alertModal = document.getElementById('alertModal');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        // Function to show the modal
+        function showModal() {
+            alertModal.style.display = 'flex';
+        }
+
+        // Function to hide the modal
+        function hideModal() {
+            alertModal.style.display = 'none';
+        }
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            // Hardcoded admin credentials
+            const admins = [
+                { name: 'Vignesh Kumar', password: 'Vignesh@2004' },
+                { name: 'Naveen Kumar', password: 'Naveen@2007' }
+            ];
+
+            const isAdmin = admins.find(admin => admin.name === user && admin.password === pass);
+            if (isAdmin) {
+                // Save login status
+                localStorage.setItem('adminLoggedIn', JSON.stringify({ name: user }));
+                window.location.href = 'college-dashboard.html';
+            } else {
+                showModal();
+            }
+        });
+
+        // Event listener to close the modal
+        closeModalBtn.addEventListener('click', hideModal);
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusQuest - Student Details</title>
+  <link rel="icon" href="./Images/scholarship.png">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 500px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #444;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #ff9800;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e68900;
+      transform: translateY(-2px);
+    }
+    .summary {
+      display: none;
+      text-align: left;
+    }
+    .summary h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .summary p {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="welcomeText">Student Details</h2>
+
+    <!-- Form -->
+    <form id="studentForm">
+      <label for="age">Age</label>
+      <input type="number" id="age" required>
+
+      <label for="education">Education Level</label>
+      <select id="education" required>
+        <option value="">--Select--</option>
+        <option value="UG">UG</option>
+        <option value="PG">PG</option>
+        <option value="Diploma">Diploma</option>
+        <option value="PhD">PhD</option>
+      </select>
+
+      <label for="stream">Stream of Study</label>
+      <select id="stream" required>
+        <option value="">--Select--</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Degree">Degree</option>
+        <option value="Doctor">Doctor</option>
+        <option value="MBA">MBA</option>
+        <option value="MCA">MCA</option>
+      </select>
+
+      <label for="marks">Marks (%)</label>
+      <input type="number" id="marks" required>
+
+      <button type="submit">Save Details</button>
+    </form>
+
+    <!-- Summary Preview -->
+    <div class="summary" id="summaryBox">
+      <h3>Details Saved ✅</h3>
+      <p><strong>Name:</strong> <span id="sName"></span></p>
+      <p><strong>Age:</strong> <span id="sAge"></span></p>
+      <p><strong>Education Level:</strong> <span id="sEducation"></span></p>
+      <p><strong>Stream:</strong> <span id="sStream"></span></p>
+      <p><strong>Marks:</strong> <span id="sMarks"></span></p>
+      <p><strong>Chosen Career:</strong> <span id="sCareer"></span></p>
+      <p style="text-align:center; color:green;"><em>Redirecting to Location Selection in 03 seconds...</em></p>
+    </div>
+  </div>
+  
+    
+
+  <script>
+    const form = document.getElementById("studentForm");
+    const summaryBox = document.getElementById("summaryBox");
+
+    const sName = document.getElementById("sName");
+    const sAge = document.getElementById("sAge");
+    const sEducation = document.getElementById("sEducation");
+    const sStream = document.getElementById("sStream");
+    const sMarks = document.getElementById("sMarks");
+    const sCareer = document.getElementById("sCareer");
+
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    const career = localStorage.getItem("chosenCareer");
+
+    // Welcome text update
+    if(user && user.name){
+      document.getElementById("welcomeText").textContent = `Welcome 👋 ${user.name}, Enter Your Details`;
+    }
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const age = document.getElementById("age").value;
+      const education = document.getElementById("education").value;
+      const stream = document.getElementById("stream").value;
+      const marks = document.getElementById("marks").value;
+
+      // Update user object
+      if(user){
+        user.age = age;
+        user.education = education;
+        user.stream = stream;
+        user.marks = marks;
+        user.chosenCareer = career;
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+      }
+
+      // Show summary
+      form.style.display = "none";
+      summaryBox.style.display = "block";
+
+      sName.textContent = user?.name || "Student";
+      sAge.textContent = age;
+      sEducation.textContent = education;
+      sStream.textContent = stream;
+      sMarks.textContent = marks;
+      sCareer.textContent = career || "Not Selected";
+
+      // Redirect after 3 sec
+      setTimeout(() => {
+        window.location.href = "location.html";
+      }, 3000);
+    });
+  </script>
+
+</body>
+</html>

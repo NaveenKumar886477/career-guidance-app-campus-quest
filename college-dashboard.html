@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: #f5f7fa;
+            color: #222;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0a58ca;
+            color: #fff;
+            padding: 16px 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        header .actions {
+            display: flex;
+            gap: 16px;
+        }
+        header button {
+            background: #fff;
+            color: #0a58ca;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        main {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 24px;
+        }
+        h1 {
+            text-align: center;
+            color: #0a58ca;
+            margin-bottom: 24px;
+        }
+        .college-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .college-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .college-header h2 {
+            margin: 0;
+            color: #0a58ca;
+        }
+        .college-header .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .college-header .actions button {
+            background: #0a58ca;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .college-header .actions button:hover { background: #084298; }
+        .college-header .actions .delete-btn {
+            background: #dc3545;
+        }
+        .college-header .actions .delete-btn:hover { background: #b02a37; }
+        .college-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .college-details div strong { display: block; color: #0a58ca; }
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 8px 0;
+        }
+        .carousel img {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            margin: auto;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        .modal-content h2 { color: #0a58ca; margin-top: 0; }
+        .modal-content label { display: block; margin-top: 12px; font-weight: 600; }
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .modal-content button {
+            margin-top: 16px;
+            background: #0a58ca;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+        .modal-content button:hover { background: #084298; }
+        .close { position: absolute; top: 12px; right: 16px; font-size: 20px; font-weight: bold; cursor: pointer; color: #333; }
+        .message-box {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .message-box h3 {
+            margin-top: 0;
+        }
+        .message-box button {
+            background: #0a58ca;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .message-box.confirm-box button:first-of-type {
+            background: #dc3545;
+            margin-right: 10px;
+        }
+        @media (max-width: 768px) {
+            .college-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <strong>CampusQuest – College Dashboard</strong>
+        <div class="actions">
+            <button onclick="openAddModal()">Add College</button>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <h1>All Registered Colleges</h1>
+        <div id="collegeContainer"></div>
+    </main>
+
+    <!-- Add Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <h2>Add College</h2>
+            <form id="addForm">
+                <label>College Name</label>
+                <input type="text" id="addName" required>
+                <label>Location</label>
+                <input type="text" id="addLocation" required>
+                <label>Type</label>
+                <input type="text" id="addType" required>
+                <label>Established</label>
+                <input type="number" id="addEstablished" required>
+                <label>Email</label>
+                <input type="email" id="addEmail" required>
+                <label>Programs</label>
+                <input type="text" id="addPrograms" required>
+                <label>Website</label>
+                <input type="url" id="addWebsite">
+                <label>Fees</label>
+                <input type="text" id="addFees">
+                <label>Placements</label>
+                <input type="text" id="addPlacements">
+                <label>Faculty</label>
+                <input type="text" id="addFaculty">
+                <label>Rules & Regulations</label>
+                <textarea id="addRules" rows="3"></textarea>
+                <label>Image URLs (comma-separated)</label>
+                <textarea id="addImages" rows="2"></textarea>
+                <button type="submit">Add College</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Edit College</h2>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <label>College Name</label>
+                <input type="text" id="editName" required>
+                <label>Location</label>
+                <input type="text" id="editLocation" required>
+                <label>Type</label>
+                <input type="text" id="editType" required>
+                <label>Established</label>
+                <input type="number" id="editEstablished" required>
+                <label>Email</label>
+                <input type="email" id="editEmail" required>
+                <label>Programs</label>
+                <input type="text" id="editPrograms" required>
+                <label>Website</label>
+                <input type="url" id="editWebsite">
+                <label>Fees</label>
+                <input type="text" id="editFees">
+                <label>Placements</label>
+                <input type="text" id="editPlacements">
+                <label>Faculty</label>
+                <input type="text" id="editFaculty">
+                <label>Rules & Regulations</label>
+                <textarea id="editRules" rows="3"></textarea>
+                <label>Image URLs (comma-separated)</label>
+                <textarea id="editImages" rows="2"></textarea>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation and Message Box Modal -->
+    <div id="messageBox" class="message-box">
+        <h3 id="messageTitle"></h3>
+        <p id="messageText"></p>
+        <button onclick="closeMessageBox()">OK</button>
+    </div>
+    <div id="confirmBox" class="message-box confirm-box">
+        <h3 id="confirmTitle"></h3>
+        <p id="confirmText"></p>
+        <div>
+            <button onclick="confirmAction(false)">Cancel</button>
+            <button onclick="confirmAction(true)">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements for modals and central container first
+        const messageBox = document.getElementById('messageBox');
+        const confirmBox = document.getElementById('confirmBox');
+        const container = document.getElementById('collegeContainer');
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
+        const addModal = document.getElementById('addModal');
+        const addForm = document.getElementById('addForm');
+
+        // General modal handlers
+        let messageCallback = null;
+        let confirmResolver = null;
+
+        function showMessageBox(title, text, callback) {
+            document.getElementById('messageTitle').innerText = title;
+            document.getElementById('messageText').innerText = text;
+            messageBox.style.display = 'block';
+            messageCallback = callback;
+        }
+
+        function closeMessageBox() {
+            messageBox.style.display = 'none';
+            if (messageCallback) {
+                messageCallback();
+                messageCallback = null;
+            }
+        }
+
+        function showConfirmBox(title, text) {
+            return new Promise((resolve) => {
+                document.getElementById('confirmTitle').innerText = title;
+                document.getElementById('confirmText').innerText = text;
+                confirmBox.style.display = 'block';
+                confirmResolver = resolve;
+            });
+        }
+
+        function confirmAction(result) {
+            if (confirmResolver) {
+                confirmResolver(result);
+                confirmResolver = null;
+            }
+            confirmBox.style.display = 'none';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function openAddModal() {
+            addForm.reset();
+            addModal.style.display = "flex";
+        }
+
+        // Check for admin login status (retains original logic)
+        const admin = JSON.parse(localStorage.getItem('adminLoggedIn'));
+        if (!admin) {
+            // Using a custom modal instead of alert
+            showMessageBox("Access Denied", "Admins only. You will be redirected to the login page.", () => {
+                window.location.href = 'admin-login.html';
+            });
+        }
+
+        let colleges = JSON.parse(localStorage.getItem('colleges')) || [];
+        let currentEditIndex = null;
+
+        function renderColleges() {
+            container.innerHTML = '';
+            if (colleges.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #777;">No colleges registered yet.</p>';
+                return;
+            }
+            colleges.forEach((college, index) => {
+                const card = document.createElement('div');
+                card.className = 'college-card';
+                card.innerHTML = `
+                    <div class="college-header">
+                        <h2>${college.name}</h2>
+                        <div class="actions">
+                            <button onclick="openEditModal(${index})">Edit</button>
+                            <button class="delete-btn" onclick="deleteCollege(${index})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="college-details">
+                        <div><strong>Location:</strong> ${college.location}</div>
+                        <div><strong>Type:</strong> ${college.type}</div>
+                        <div><strong>Established:</strong> ${college.established}</div>
+                        <div><strong>Email:</strong> ${college.email}</div>
+                        <div><strong>Programs:</strong> ${college.programs}</div>
+                        <div><strong>Website:</strong> <a href="${college.website}" target="_blank">${college.website}</a></div>
+                        <div><strong>Fees:</strong> ${college.fees || 'N/A'}</div>
+                        <div><strong>Placements:</strong> ${college.placements || 'N/A'}</div>
+                        <div><strong>Faculty:</strong> ${college.faculty || 'N/A'}</div>
+                        <div><strong>Rules:</strong> ${college.rules || 'N/A'}</div>
+                    </div>
+                    <div class="carousel">
+                        ${(college.images || []).map(img => img ? `<img src="${img}" alt="College Image" onerror="this.style.display='none'">` : '').join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openEditModal(index) {
+            currentEditIndex = index;
+            const college = colleges[index];
+            if (college) {
+                document.getElementById("editName").value = college.name;
+                document.getElementById("editLocation").value = college.location;
+                document.getElementById("editType").value = college.type;
+                document.getElementById("editEstablished").value = college.established;
+                document.getElementById("editEmail").value = college.email;
+                document.getElementById("editPrograms").value = college.programs;
+                document.getElementById("editWebsite").value = college.website;
+                document.getElementById("editFees").value = college.fees || '';
+                document.getElementById("editPlacements").value = college.placements || '';
+                document.getElementById("editFaculty").value = college.faculty || '';
+                document.getElementById("editRules").value = college.rules || '';
+                document.getElementById("editImages").value = college.images ? college.images.join(', ') : '';
+                editModal.style.display = "flex";
+            }
+        }
+
+        editForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const college = colleges[currentEditIndex];
+            college.name = document.getElementById("editName").value.trim();
+            college.location = document.getElementById("editLocation").value.trim();
+            college.type = document.getElementById("editType").value.trim();
+            college.established = document.getElementById("editEstablished").value.trim();
+            college.email = document.getElementById("editEmail").value.trim();
+            college.programs = document.getElementById("editPrograms").value.trim();
+            college.website = document.getElementById("editWebsite").value.trim();
+            college.fees = document.getElementById("editFees").value.trim();
+            college.placements = document.getElementById("editPlacements").value.trim();
+            college.faculty = document.getElementById("editFaculty").value.trim();
+            college.rules = document.getElementById("editRules").value.trim();
+            college.images = document.getElementById("editImages").value.split(',').map(url => url.trim()).filter(url => url);
+
+            localStorage.setItem('colleges', JSON.stringify(colleges));
+            renderColleges();
+            closeModal('editModal');
+            showMessageBox("Success", 'College details updated successfully! ✅');
+        });
+
+        addForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const newCollege = {
+                name: document.getElementById("addName").value.trim(),
+                location: document.getElementById("addLocation").value.trim(),
+                type: document.getElementById("addType").value.trim(),
+                established: document.getElementById("addEstablished").value.trim(),
+                email: document.getElementById("addEmail").value.trim(),
+                programs: document.getElementById("addPrograms").value.trim(),
+                website: document.getElementById("addWebsite").value.trim(),
+                fees: document.getElementById("addFees").value.trim(),
+                placements: document.getElementById("addPlacements").value.trim(),
+                faculty: document.getElementById("addFaculty").value.trim(),
+                rules: document.getElementById("addRules").value.trim(),
+                images: document.getElementById("addImages").value.split(',').map(url => url.trim()).filter(url => url),
+            };
+
+            colleges.push(newCollege);
+            localStorage.setItem('colleges', JSON.stringify(colleges));
+            renderColleges();
+            closeModal('addModal');
+            showMessageBox("Success", 'New college added successfully! 🎉');
+        });
+
+        async function deleteCollege(index) {
+            const confirmation = await showConfirmBox("Confirm Deletion", `Are you sure you want to delete ${colleges[index].name}?`);
+            if (confirmation) {
+                colleges.splice(index, 1);
+                localStorage.setItem('colleges', JSON.stringify(colleges));
+                renderColleges();
+                showMessageBox("Success", "College deleted successfully! 🗑️");
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target === editModal) closeModal('editModal');
+            if (event.target === addModal) closeModal('addModal');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            showMessageBox("Signed Out", "You have been logged out. Redirecting to login page.", () => {
+                window.location.href = 'admin-login.html';
+            });
+        }
+
+        // Expose functions to the global scope for event handlers
+        window.openAddModal = openAddModal;
+        window.openEditModal = openEditModal;
+        window.closeModal = closeModal;
+        window.deleteCollege = deleteCollege;
+        window.logout = logout;
+        window.closeMessageBox = closeMessageBox;
+        window.confirmAction = confirmAction;
+
+        // Initial render
+        renderColleges();
+    </script>
+</body>
+</html>

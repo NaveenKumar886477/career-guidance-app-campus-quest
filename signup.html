@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusQuest - Signup</title>
+  <link rel="icon" href="./Images/scholarship.png">
+  <link rel="stylesheet" href="signup.css">
+  <style>
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 4px;
+      display: block;
+    }
+    .password-container {
+      display: flex;
+      align-items: center;
+    }
+    .password-container input {
+      flex: 1;
+    }
+    .toggle-password {
+      margin-left: 8px;
+      cursor: pointer;
+    }
+    input {
+      border: 1px solid #ccc;
+      padding: 6px;
+      border-radius: 5px;
+      outline: none;
+      transition: 0.3s;
+    }
+    input.error-border {
+      border: 2px solid red;
+    }
+    input.valid-border {
+      border: 2px solid green;
+    }
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Signup | CampusQuest 🎓</h2>
+    <form id="signupForm">
+      <label>Full Name:</label>
+      <input type="text" id="name" required>
+      <span class="error" id="nameError"></span>
+
+      <label>Email:</label>
+      <input type="email" id="email" required>
+      <span class="error" id="emailError"></span>
+
+      <label>Password:</label>
+      <div class="password-container">
+        <input type="password" id="signupPassword" required>
+        <span class="toggle-password" id="toggleSignup">👁️</span>
+      </div>
+      <span class="error" id="passwordError"></span>
+
+      <button type="submit" id="signupBtn" disabled>Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="login.html">Login</a></p>
+  </div>
+
+  <script>
+    const signupForm = document.getElementById("signupForm");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("signupPassword");
+    const togglePassword = document.getElementById("toggleSignup");
+    const signupBtn = document.getElementById("signupBtn");
+
+    const nameError = document.getElementById("nameError");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+
+    // Toggle password visibility
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      togglePassword.textContent = type === "password" ? "👁️" : "🙈";
+    });
+
+    // Validation function
+    function validateInput(input, errorElement, condition, errorMessage) {
+      if (!condition) {
+        errorElement.textContent = errorMessage;
+        input.classList.add("error-border");
+        input.classList.remove("valid-border");
+        return false;
+      } else {
+        errorElement.textContent = "";
+        input.classList.add("valid-border");
+        input.classList.remove("error-border");
+        return true;
+      }
+    }
+
+    function checkFormValidity() {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+      const isNameValid = validateInput(
+        nameInput,
+        nameError,
+        nameInput.value.trim().length >= 3,
+        "Full name must be at least 3 characters long."
+      );
+
+      const isEmailValid = validateInput(
+        emailInput,
+        emailError,
+        emailPattern.test(emailInput.value.trim()),
+        "Please enter a valid email address."
+      );
+
+      const isPasswordValid = validateInput(
+        passwordInput,
+        passwordError,
+        passwordPattern.test(passwordInput.value.trim()),
+        "Password must be 8+ chars, include uppercase, lowercase, number & special character."
+      );
+
+      signupBtn.disabled = !(isNameValid && isEmailValid && isPasswordValid);
+    }
+
+    nameInput.addEventListener("input", checkFormValidity);
+    emailInput.addEventListener("input", checkFormValidity);
+    passwordInput.addEventListener("input", checkFormValidity);
+
+    // Submit
+    signupForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      checkFormValidity();
+
+      if (!signupBtn.disabled) {
+        // Save signup details in localStorage
+        const userData = {
+          name: nameInput.value.trim(),
+          email: emailInput.value.trim(),
+          password: passwordInput.value.trim()
+        };
+        localStorage.setItem("userData", JSON.stringify(userData));
+
+        alert("Signup successful! Please login.");
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>

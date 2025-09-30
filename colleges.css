@@ -1,0 +1,193 @@
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Oswald', 'Inter', sans-serif;
+        }
+
+        /* ===== Body & Background Styling ===== */
+        body {
+            background: linear-gradient(-45deg, #1d2b53, #2575fc, #304e90, #16365c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-attachment: fixed;
+        }
+
+        /* Background animation */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ===== Main Content Sections ===== */
+        .main-content {
+            flex-grow: 1; /* Allows the main content to take up available space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 2rem;
+        }
+
+        /* ===== Headings & Text ===== */
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            position: relative;
+            padding-bottom: 0.25rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+            font-family: 'Oswald', sans-serif;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #e0f7fa;
+            border-left: 6px solid #e0f7fa;
+            padding-left: 12px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 60px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+        }
+
+        /* ===== Buttons ===== */
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .buttons-container a, .back-button {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255,255,255,0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .buttons-container a:hover, .back-button:hover {
+            background: #fff;
+            color: #2575fc;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* ===== College Lists ===== */
+        .college-list-section {
+            padding: 40px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        ul.college-list {
+            list-style: none;
+            margin: 20px 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        ul.college-list li {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 24px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        ul.college-list li::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+            transform: scale(0);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        ul.college-list li:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+        }
+        
+        ul.college-list li:hover::before {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        ul.college-list li a {
+            text-decoration: none;
+            color: #e0f7fa;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: block;
+            z-index: 2;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        ul.college-list li a:hover {
+            color: #60a5fa;
+        }
+ /* ===== Responsive Fixes ===== */
+        @media(max-width: 600px){
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .buttons-container a {
+                padding: 12px 25px;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.4rem;
+            }
+
+            ul.college-list {
+                grid-template-columns: 1fr;
+            }
+        }
